@@ -1,4 +1,15 @@
 <%= form_for @image do |f| %>
-<%= f.file_field :source %>
-<%= f.submit %>
+<p>
+  <%= f.label :source, "Upload an Image" %>
+  <%= f.file_field :source %>
+</p>
+<p>or</p>
+
+<p>
+  <%= f.label :url, "Provide a URL" %>
+  <%= f.text_field :url %>
+</p>
+
+<p><%= f.submit %></p>
+
 <% end %>
