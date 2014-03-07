@@ -12,6 +12,7 @@ gem 'jquery-rails'
 
 gem 'carrierwave'
 gem 'mini_magick'
+gem 'nokogiri'
 
 group :test, :development do
   gem "rspec-rails"

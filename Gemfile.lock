@@ -144,6 +144,7 @@ DEPENDENCIES
   jquery-rails
   launchy
   mini_magick
+  nokogiri
   pg (~> 0.17.0)
   quiet_assets
   rails (= 4.0.3)
