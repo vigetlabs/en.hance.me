@@ -18,7 +18,6 @@
 /config/database.yml
 /coverage/*
 /.rvmrc
-/.ruby-version
 /.rbenv-gemsets
 /.powrc
 
