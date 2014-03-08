@@ -20,6 +20,10 @@ group :test, :development do
 end
 
 group :development do
+  gem "viget-deployment",
+    :github => 'vigetlabs/viget-deployment',
+    :require => false
+
   gem "rails-dev-tweaks"
   gem "quiet_assets"
 end

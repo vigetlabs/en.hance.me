@@ -1,0 +1,8 @@
+<%= rails_env %>:
+  adapter: postgresql
+  encoding: utf8
+  database: <%= Capistrano::CLI.ui.ask("Database name: ") %>
+  pool: 5
+  username: <%= Capistrano::CLI.ui.ask("Database username: ") %>
+  password: <%= Capistrano::CLI.ui.ask("Database password: ") %>
+  host: <%= Capistrano::CLI.ui.ask("Database host: ") %>
