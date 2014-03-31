@@ -6,7 +6,7 @@
 
   <%= image_tag @source.image.url, :id => 'source-image' %>
 
-  <%= f.submit %>
+  <%= f.submit 'Create Montage', :disabled => true %>
 <% end %>
 
 <% if @source.montages.any? %>
@@ -28,6 +28,8 @@
         $form.find('#image-y').val(c.y);
         $form.find('#image-width').val(c.w);
         $form.find('#image-height').val(c.h);
+
+        $form.find('input[type=submit]').removeAttr('disabled');
       }
     })
   })
