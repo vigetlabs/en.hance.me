@@ -1,16 +1,16 @@
-class Montage
+class Montage < ActiveRecord::Base
 
-  attr_reader :target_x, :target_y, :target_width, :target_height
+  belongs_to :source
 
-  def initialize(image, target_x, target_y, target_width, target_height)
-    @image         = image
-    @target_x      = target_x.to_i
-    @target_y      = target_y.to_i
-    @target_width  = target_width.to_i
-    @target_height = target_height.to_i
-  end
+  mount_uploader :image, ImageUploader
 
-  def create
+  scope :latest, -> { order(:created_at => :desc) }
+
+  after_create :generate_image
+
+  private
+
+  def generate_image
     images = [uploaded_image_path]
 
     Dir.mktmpdir do |dir|
@@ -23,7 +23,7 @@ class Montage
         Rails.logger.warn("#{w}x#{h}+#{x}+#{y}")
         image.combine_options do |c|
           c.crop "#{w}x#{h}+#{x}+#{y}"
-          c.resize "#{width}x"
+          c.resize "#{source_width}x"
         end
         path = File.join(dir, "#{index}.jpg")
 
@@ -38,20 +38,20 @@ class Montage
 
       `montage #{args.join(' ')}`
 
-      @image.update_attributes!(:montage => File.open(output_file))
+      update_attributes!(:image => File.open(output_file))
     end
   end
 
-  def width
+  def source_width
     uploaded_image[:width]
   end
 
-  def height
+  def source_height
     uploaded_image[:height]
   end
 
   def uploaded_image_path
-    @image.source.path
+    source.image.path
   end
 
   def uploaded_image
@@ -59,15 +59,15 @@ class Montage
   end
 
   def sizes
-    target_bottom_right_x = target_x + target_width
-    target_bottom_right_y = target_y + target_height
+    target_bottom_right_x = crop_x + crop_width
+    target_bottom_right_y = crop_y + crop_height
 
     # get first box
-    first_x = target_x / 3
-    first_y = target_y / 3
+    first_x = crop_x / 3
+    first_y = crop_y / 3
 
-    first_bottom_x = width - ((width - target_bottom_right_x) / 3)
-    first_bottom_y = height - ((height - target_bottom_right_y) / 3)
+    first_bottom_x = source_width - ((source_width - target_bottom_right_x) / 3)
+    first_bottom_y = source_height - ((source_height - target_bottom_right_y) / 3)
 
     first_width  = first_bottom_x - first_x
     first_height = first_bottom_y - first_y
@@ -75,11 +75,11 @@ class Montage
     first = [first_x, first_y, first_width, first_height]
 
     # get second box
-    second_x = 2 * target_x / 3
-    second_y = 2 * target_y / 3
+    second_x = 2 * crop_x / 3
+    second_y = 2 * crop_y / 3
 
-    second_bottom_x = width - (2 * (width - target_bottom_right_x) / 3)
-    second_bottom_y = height - (2 * (height - target_bottom_right_y) / 3)
+    second_bottom_x = source_width - (2 * (source_width - target_bottom_right_x) / 3)
+    second_bottom_y = source_height - (2 * (source_height - target_bottom_right_y) / 3)
 
     second_width  = second_bottom_x - second_x
     second_height = second_bottom_y - second_y
@@ -87,7 +87,7 @@ class Montage
     second = [second_x, second_y, second_width, second_height]
 
     # third (final) box is given
-    third = [target_x, target_y, target_width, target_height]
+    third = [crop_x, crop_y, crop_width, crop_height]
 
     [first, second, third]
   end

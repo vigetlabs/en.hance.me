@@ -1,0 +1,35 @@
+<%= form_for [@source, @montage] do |f| %>
+  <%= f.hidden_field :crop_x,      :id => 'image-x' %>
+  <%= f.hidden_field :crop_y,      :id => 'image-y' %>
+  <%= f.hidden_field :crop_width,  :id => 'image-width' %>
+  <%= f.hidden_field :crop_height, :id => 'image-height' %>
+
+  <%= image_tag @source.image.url, :id => 'source-image' %>
+
+  <%= f.submit %>
+<% end %>
+
+<% if @source.montages.any? %>
+  <p>Recent montages:</p>
+  <% @source.montages.latest.each do |montage| %>
+    <%= link_to montage do %>
+      <%= image_tag(montage.image.url, :width => 200, :height => 400) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<script>
+  $(function() {
+    $('#source-image').Jcrop({
+      onSelect: function(c) {
+        var $form = $('form#new_montage');
+
+        $form.find('#image-x').val(c.x);
+        $form.find('#image-y').val(c.y);
+        $form.find('#image-width').val(c.w);
+        $form.find('#image-height').val(c.h);
+      }
+    })
+  })
+</script>
+

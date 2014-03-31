@@ -11,14 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140306180552) do
+ActiveRecord::Schema.define(version: 20140308001507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "images", force: true do |t|
-    t.string   "source",     null: false
-    t.string   "montage"
+  create_table "montages", force: true do |t|
+    t.integer  "source_id"
+    t.integer  "crop_x"
+    t.integer  "crop_y"
+    t.integer  "crop_width"
+    t.integer  "crop_height"
+    t.string   "image"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sources", force: true do |t|
+    t.string   "image",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
