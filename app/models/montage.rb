@@ -38,6 +38,7 @@ class Montage < ActiveRecord::Base
 
       `montage #{args.join(' ')}`
 
+      apply_watermark_to(output_file)
       update_attributes!(:image => File.open(output_file))
     end
   end
@@ -92,4 +93,7 @@ class Montage < ActiveRecord::Base
     [first, second, third]
   end
 
+  def apply_watermark_to(file)
+    `convert #{file} -gravity South -background Black -fill white -pointsize 40 -splice 0x50 -annotate +0+2 'en.hance.me' #{file}`
+  end
 end
