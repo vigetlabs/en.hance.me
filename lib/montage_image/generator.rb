@@ -4,6 +4,8 @@ module MontageImage
 
     DEFAULT_STEP_COUNT = 3
 
+    class GenerationError < StandardError; end
+
     def initialize(image, crop = {})
       @image = image
       @crop = crop
@@ -22,9 +24,9 @@ module MontageImage
       if create_montage(components)
         yield output_file_path
       else
-        yield false
+        raise GenerationError('Montage image generation failed.')
       end
-
+    ensure
       cleanup
     end
 
