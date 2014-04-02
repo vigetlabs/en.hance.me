@@ -1,4 +1,5 @@
 class Montage < ActiveRecord::Base
+  include ProcessingStatus
 
   belongs_to :source
 
@@ -6,12 +7,12 @@ class Montage < ActiveRecord::Base
 
   scope :latest, -> { order(:created_at => :desc) }
 
+  after_create :enqueue_image_generation
+
   def generate_image
-    image_generator.generate do |file|
-      if file
-        update_attributes!(:image => File.open(file))
-      else
-        # handle failure
+    process do
+      image_generator.generate do |file|
+        update_attributes(:image => File.open(file))
       end
     end
   end
@@ -20,14 +21,18 @@ class Montage < ActiveRecord::Base
 
   def crop_specs
     {
-      x:      crop_x,
-      y:      crop_y,
-      width:  crop_width,
-      height: crop_height
+      :x      => crop_x,
+      :y      => crop_y,
+      :width  => crop_width,
+      :height => crop_height
     }
   end
 
   def image_generator
     @image_generator ||= MontageImage::Generator.new(source.image, crop_specs)
+  end
+
+  def enqueue_image_generation
+    Resque.enqueue(Jobs::ImageGeneration, id, self.class.to_s)
   end
 end
