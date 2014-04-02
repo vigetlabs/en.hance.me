@@ -12,6 +12,11 @@ class MontagesController < ApplicationController
 
   def show
     @montage = Montage.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.json { render :json => @montage.to_json }
+    end
   end
 
   private
@@ -25,5 +30,4 @@ class MontagesController < ApplicationController
       require(:montage).
       permit(:crop_x, :crop_y, :crop_width, :crop_height)
   end
-
 end

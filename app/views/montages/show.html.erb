@@ -1,2 +1,32 @@
-<div><%= image_tag @montage.image.url %></div>
+<% if @montage.status == 'success' %>
+  <div><%= image_tag @montage.image.url %></div>
+<% elsif %w(queued processing).include?(@montage.status) %>
+  <h1>Your image is being generated. Sit tight.</h1>
+
+  <div id="success-message" style="display:none;">
+    <p>Pssst. Hey. Your image is ready... <%= link_to 'Check it out!', montage_url(@montage) %></p>
+  </div>
+  <div id="error-message" style="display:none;">Shoot, your image couldn't be generated.</div>
+
+  <script>
+    (function poll(){
+        setTimeout(function(){
+            $.ajax({ url: "<%= montage_url(@montage) %>", success: function(data){
+                console.log(data)
+                if(data.status == 'success') {
+                  $('#success-message').show();
+                } else if(data.status == 'failed') {
+                  $('#error-message').show();
+                }
+            }, dataType: "json", complete: poll, timeout: 5000});
+        }, 2000);
+    })();
+  </script>
+
+
+  <iframe src="http://sayviget.com" width="1000" height="600">
+<% else %>
+  <h1>Shoot, your image couldn't be generated.</h1>
+<% end %>
+
 <div><%= link_to "Create Another", @montage.source %></div>

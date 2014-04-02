@@ -13,10 +13,12 @@ gem 'jquery-rails'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'nokogiri'
+gem 'resque'
 
 group :test, :development do
   gem "rspec-rails"
   gem "factory_girl_rails"
+  gem "pry"
 end
 
 group :development do
