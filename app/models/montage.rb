@@ -94,6 +94,6 @@ class Montage < ActiveRecord::Base
   end
 
   def apply_watermark_to(file)
-    `convert #{file} -gravity South -background Black -fill white -pointsize 40 -splice 0x50 -annotate +0+2 'en.hance.me' #{file}`
+    Watermarker.new(file).apply_watermark
   end
 end
