@@ -22,6 +22,7 @@ module MontageImage
       components << output_file_path
 
       if create_montage(components)
+        apply_watermark_to(output_file_path)
         yield output_file_path
       else
         raise GenerationError('Montage image generation failed.')
