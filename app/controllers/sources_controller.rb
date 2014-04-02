@@ -2,7 +2,6 @@ class SourcesController < ApplicationController
 
   def new
     @source = Source.new
-    render :layout => false
   end
 
   def create
