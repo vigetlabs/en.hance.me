@@ -6,10 +6,6 @@ class Montage < ActiveRecord::Base
 
   scope :latest, -> { order(:created_at => :desc) }
 
-  after_create :generate_image
-
-  private
-
   def generate_image
     image_generator.generate do |file|
       if file
@@ -19,6 +15,8 @@ class Montage < ActiveRecord::Base
       end
     end
   end
+
+  private
 
   def crop_specs
     {

@@ -4,6 +4,7 @@ class MontagesController < ApplicationController
     @montage = source.montages.build(montage_params)
 
     if @montage.save
+      @montage.generate_image
       redirect_to @montage
     else
       redirect_to root_url
