@@ -33,7 +33,7 @@ class Watermarker
 
     if rgb_matches.any?
       rgb_values = rgb_matches.first
-      rgb_total = rgb_values.map(&:to_i).inject{ |sum, value| sum + value }
+      rgb_total = rgb_values.map(&:to_i).inject(&:+)
       if rgb_total < (255*3/2)
         scheme = :light
       end
