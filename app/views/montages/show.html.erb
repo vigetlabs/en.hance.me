@@ -1,2 +1,3 @@
+<div><%= text_field_tag 'url', [request.protocol, request.host_with_port, @montage.image.url].join, size: 100, autofocus: true %></div>
 <div><%= image_tag @montage.image.url %></div>
 <div><%= link_to "Create Another", @montage.source %></div>
