@@ -14,7 +14,6 @@ gem 'carrierwave'
 gem 'mini_magick'
 gem 'nokogiri'
 gem 'resque'
-gem 'resque-web'
 
 group :test, :development do
   gem "rspec-rails"

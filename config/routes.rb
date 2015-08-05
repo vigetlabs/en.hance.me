@@ -1,8 +1,4 @@
-require 'resque_web'
-
 EnhanceMe::Application.routes.draw do
-
-  mount ResqueWeb::Engine => "/resque"
 
   resources :sources, :only => [:create, :show] do
     resources :montages, :only => [:create]
