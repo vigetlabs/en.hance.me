@@ -23,7 +23,8 @@ module MontageImage
 
       if create_montage(components)
         apply_watermark_to(output_file_path)
-        yield output_file_path
+        create_gif_from_sub_images
+        yield output_file_path, output_gif_file_path
       else
         raise GenerationError('Montage image generation failed.')
       end
@@ -39,6 +40,46 @@ module MontageImage
       montage_args = (['-tile 1x', '-geometry +0+0'] + components).join(' ')
       `montage #{montage_args}`
       $?.success?
+    end
+
+    def create_gif_from_sub_images
+      # copy original image
+      FileUtils.cp(image.path, File.join(working_directory, "source0#{image_extension}"))
+      # copy sub_images
+      FileUtils.mv(File.join(working_directory, "0#{image_extension}"), File.join(working_directory, "source1#{image_extension}"))
+      FileUtils.mv(File.join(working_directory, "1#{image_extension}"), File.join(working_directory, "source2#{image_extension}"))
+      FileUtils.mv(File.join(working_directory, "2#{image_extension}"), File.join(working_directory, "source3#{image_extension}"))
+
+      # first, the slow gif
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << "-delay" << "100"
+        convert << "-loop" << "0"
+        convert << "#{File.join(working_directory, 'source*')}"
+        convert << File.join(working_directory, "slow.gif")
+      end
+
+      # second, a faster gif with a sustain at the end
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << "-delay" << "50"
+        convert << "-loop" << "0"
+        convert << "#{File.join(working_directory, 'source*')}"
+        convert << "#{File.join(working_directory, "source3#{image_extension}")}"
+        convert << "#{File.join(working_directory, "source3#{image_extension}")}"
+        convert << "#{File.join(working_directory, "source3#{image_extension}")}"
+        convert << "#{File.join(working_directory, "source3#{image_extension}")}"
+        convert << File.join(working_directory, "fast.gif")
+      end
+
+      # third, combine the two
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << File.join(working_directory, "slow.gif")
+        convert << File.join(working_directory, "fast.gif")
+        convert << File.join(working_directory, "result.gif")
+      end
+    end
+
+    def output_gif_file_path
+      File.join(working_directory, "result.gif")
     end
 
     def new_sub_image(step, index)

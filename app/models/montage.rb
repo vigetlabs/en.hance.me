@@ -4,6 +4,7 @@ class Montage < ActiveRecord::Base
   belongs_to :source
 
   mount_uploader :image, ImageUploader
+  mount_uploader :gif_image, ImageUploader
 
   scope :latest, -> { order(:created_at => :desc) }
 
@@ -11,8 +12,9 @@ class Montage < ActiveRecord::Base
 
   def generate_image
     process do
-      image_generator.generate do |file|
+      image_generator.generate do |file, gif_file|
         update_attributes(:image => File.open(file))
+        update_attributes(:gif_image => File.open(gif_file))
       end
     end
   end

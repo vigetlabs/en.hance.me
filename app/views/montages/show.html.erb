@@ -1,5 +1,6 @@
 <% if @montage.status == 'success' %>
   <div><%= image_tag @montage.image.url %></div>
+  <div><%= image_tag @montage.gif_image.url %></div>
 <% elsif %w(queued processing).include?(@montage.status) %>
   <h1>Your image is being generated. Sit tight.</h1>
 
