@@ -8,6 +8,9 @@ development:
 test:
   <<: *defaults
 
+integration:
+  <<: *defaults
+
 staging:
   <<: *defaults
 
