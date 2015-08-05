@@ -6,6 +6,6 @@ class Source < ActiveRecord::Base
   has_many :montages
 
   def url=(url)
-    self.source = open(url) if url.present?
+    self.image = open(url) if url.present?
   end
 end
