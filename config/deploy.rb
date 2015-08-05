@@ -10,12 +10,14 @@ namespace :resque do
     desc "Start Resque"
     task :start, :roles => [:resque] do
       rake_task = "env RAILS_ENV=#{rails_env} QUEUE=* BACKGROUND=yes PIDFILE=tmp/pids/resque_worker.pid rake resque:work > /dev/null 2>&1"
-      run "cd #{current_path}; bundle exec #{rake_task}"
+      run "cd #{release_path}; bundle exec #{rake_task}"
     end
 
     desc "Stop Resque"
     task :stop, :roles => [:resque] do
-      run "cd #{current_path}; bundle exec rake resque:stop_worker"
+      pid_path = 'tmp/pids/resque_worker.pid'
+      `cd #{release_path}; cat #{pid_path} | xargs kill -s QUIT`
+      `cd #{release_path}; rm -f #{pid_path}`
     end
 
     desc "Restart Resque"
